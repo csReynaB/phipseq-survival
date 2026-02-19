@@ -55,6 +55,9 @@ dependencies = [
 # Install with: pip install -e .[dev]
 # Or install via conda-forge separately
 # ---------------------------------------------------------------------
+[project.scripts]
+survival-trainTest = "survival.cli.main_survival_trainTest:main"
+
 [project.optional-dependencies]
 dev = [
   "black",
@@ -63,7 +66,6 @@ dev = [
   "pre-commit",
   "jupyterlab",
 ]
-
 # ---------------------------------------------------------------------
 # Black — formatter
 # ---------------------------------------------------------------------

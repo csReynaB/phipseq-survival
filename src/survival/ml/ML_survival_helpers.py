@@ -981,17 +981,13 @@ def nested_cv_allfolds(
 #  External Validation model   #
 ################################
 
-
-def align_features(X_train, X_ext):
-    """Align features between training and external test sets."""
-    common_features = list(set(X_train.columns).intersection(X_ext.columns))
-    if common_features:
-        X_train = X_train[common_features]
-        X_ext = X_ext[common_features]
-        return X_train, X_ext
-    else:
-        raise ValueError("Training and External set shared no common features")
-
+def align_external_to_train(X_train, X_ext, fill_value=0, min_overlap=0.7):
+    train_cols = list(X_train.columns)
+    overlap = len(set(train_cols) & set(X_ext.columns)) / len(train_cols)
+    if overlap < min_overlap:
+        raise ValueError(f"External set overlaps only {overlap:.1%} of training features.")
+    X_ext_aligned = X_ext.reindex(columns=train_cols, fill_value=fill_value)
+    return X_ext_aligned
 
 def train_and_validate_model(
     X_train: pd.DataFrame,
@@ -1055,12 +1051,6 @@ def train_and_validate_model(
         Time-dependent AUC mean based on given timepoints
     """
 
-    set_config(transform_output="pandas")
-
-    if not get_only_model:
-        X_train, X_test = align_features(X_train, X_test)
-        shap_values_df = pd.DataFrame(0.0, index=X_test.index, columns=X_test.columns)
-
     # if the user handed us an already‐trained model, use that
     if best_estimator is None:
         best_estimator = _build_and_fit_pipeline(
@@ -1076,6 +1066,9 @@ def train_and_validate_model(
 
         if get_only_model:
             return best_estimator
+
+    X_test = align_external_to_train(X_train, X_test, fill_value=0, min_overlap=0.7)
+    shap_values_df = pd.DataFrame(0.0, index=X_test.index, columns=X_test.columns)
 
     # Predict risk scores on the validation fold
     risk_scores = best_estimator.predict(X_test)

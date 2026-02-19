@@ -106,6 +106,8 @@ conda install -c conda-forge black isort ruff
 
 # or like
 conda env create -f ML_env.yml --prefix /path/to/envs/survival_xgb
+conda activate ML_env
+python -m pip install . --no-deps
 
 ## Running array in SLURM
 
@@ -115,6 +117,15 @@ sbatch --array=1-100 \
   configs/survival.yaml \
   results/ \
   project_results
+
+## Docker installation
+docker build -t survival:mlenv .
+# check if install correctly
+docker run --rm survival:mlenv python -m pip show survival
+# Run main script
+docker run --rm survival:mlenv python -m survival.cli.main_survival_trainTest --help
+# save image for exporting 
+docker save survival:mlenv -o survival_mlenv.tar
 
 ## Internally running
 python -m survival.cli.main_survival_trainTest --help

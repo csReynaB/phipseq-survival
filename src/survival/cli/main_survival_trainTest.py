@@ -91,7 +91,7 @@ def str2bool(x):
     raise argparse.ArgumentTypeError(f"Boolean value expected, got {x!r}")
 
 
-if __name__ == "__main__":
+def parse_args_survival(argv=None)-> argparse.Namespace:
     # Parse the command-line argument for the random seed
     parser = argparse.ArgumentParser(
         description="Run nested CV and validation with custom random seed and metadata filters for survival models."
@@ -103,35 +103,35 @@ if __name__ == "__main__":
         type=int,
         nargs="?",
         default=420,
-        help="Random seed (default: 420)",
+        help="Random seed (default: 420)"
     )
     parser.add_argument(
         "--config",
         "-cf",
         type=str,
         default="config.yaml",
-        help="Full path of the config file to use (default: config.yaml in script directory)",
+        help="Full path of the config file to use (default: config.yaml in script directory)"
     )
     parser.add_argument(
         "--run_nested_cv",
         "-ncv",
         type=str2bool,
         default=True,
-        help="Run nested cv for training set (default: True)",
+        help="Run nested cv for training set (default: True)"
     )
     parser.add_argument(
         "--use_pretrained",
         "-upr",
         type=str2bool,
         default=False,
-        help="Load pre trained model from joblib file (default: False)",
+        help="Load pre trained model from joblib file (default: False)"
     )
     parser.add_argument(
         "--only_train_model",
         "-otm",
         type=str2bool,
         default=False,
-        help="Whether to only train model or return predictions as well(True|False).",
+        help="Whether to only train model or return predictions as well(True|False)."
     )
 
     parser.add_argument(
@@ -139,35 +139,35 @@ if __name__ == "__main__":
         "-sub",
         type=str,
         default="all",
-        help="What subgroup of peptides to include in the analysis. Default = all",
+        help="What subgroup of peptides to include in the analysis. Default = all"
     )
     parser.add_argument(
         "--with_oligos",
         "-wo",
         type=str2bool,
         default=True,
-        help="Include or not peptides in the analysis. Default = True",
+        help="Include or not peptides in the analysis. Default = True"
     )
     parser.add_argument(
         "--with_additional_features",
         "-wa",
         type=str2bool,
         default=False,
-        help="Include or not additional features in the analysis (e.g. Sex and Age). Default = False",
+        help="Include or not additional features in the analysis (e.g. Sex and Age). Default = False"
     )
     parser.add_argument(
         "--prevalence_threshold_min",
         "-min",
         type=float,
         default=2.0,
-        help="Minimum prevalence threshold filter for training set. Default = 2.0",
+        help="Minimum prevalence threshold filter for training set. Default = 2.0"
     )
     parser.add_argument(
         "--prevalence_threshold_max",
         "-max",
         type=float,
         default=98.0,
-        help="Maximum prevalence threshold filter for training set. Default = 98.0",
+        help="Maximum prevalence threshold filter for training set. Default = 98.0"
     )
 
     parser.add_argument(
@@ -175,14 +175,14 @@ if __name__ == "__main__":
         "-ocv",
         type=int,
         default=5,
-        help="Number of k folds for outer cross-validation. Default = 5",
+        help="Number of k folds for outer cross-validation. Default = 5"
     )
     parser.add_argument(
         "--inner_cv_split",
         "-icv",
         type=int,
         default=5,
-        help="Number of k folds for inner cross-validation. Default = 5",
+        help="Number of k folds for inner cross-validation. Default = 5"
     )
 
     parser.add_argument(
@@ -190,7 +190,7 @@ if __name__ == "__main__":
         "-maxT",
         type=int,
         default=25,
-        help="Max time point for survival analysis AUC (default: 25)",
+        help="Max time point for survival analysis AUC (default: 25)"
     )
 
     parser.add_argument(
@@ -215,7 +215,7 @@ if __name__ == "__main__":
         action="append",
         default=[],
         metavar=("FILTER_JSON", "OUT_BASENAME"),
-        help='One validation set: JSON filter and output‐base, e.g. \'{"treatment":"ICI"} Cirrhosis-ICI-H\'.',
+        help='One validation set: JSON filter and output‐base, e.g. \'{"treatment":"ICI"} Cirrhosis-ICI-H\'.'
     )
 
     parser.add_argument(
@@ -223,31 +223,35 @@ if __name__ == "__main__":
         "-id",
         type=str,
         default=".",
-        help="Base name for directory to input joblib files (default: .)",
+        help="Base name for directory to input joblib files (default: .)"
     )
     parser.add_argument(
         "--out_dir",
         "-d",
         type=str,
         default=".",
-        help="Base name for directory to save files (default: .)",
+        help="Base name for directory to save files (default: .)"
     )
     parser.add_argument(
         "--input_name",
         "-i",
         type=str,
         default="input_name",
-        help="Base name for pre_trained model files for test predictions (default: input_name)",
+        help="Base name for pre_trained model files for test predictions (default: input_name)"
     )
     parser.add_argument(
         "--out_name",
         "-o",
         type=str,
         default="out_name",
-        help="Base name for nested‐CV and train_test split predictions (default: out_name)",
+        help="Base name for nested‐CV and train_test split predictions (default: out_name)"
     )
 
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+def main(argv=None):
+
+    args = parse_args_survival(argv)
 
     random_seed = args.seed
     outer_cv_split = args.outer_cv_split
@@ -401,3 +405,7 @@ if __name__ == "__main__":
                 logger.info(
                     f"validation for {out_val} runtime: {end_time - start_time:.2f} seconds"
                 )
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
