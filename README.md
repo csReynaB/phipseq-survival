@@ -29,16 +29,16 @@ survival_project/
 │   ├── run_survival.sh
 │
 ├── src/
-│   └── survival/
+│   └── phipsurv/
 │       ├── cli/
-│       │   └── main_survival_trainTest.py
+│       │   └── train_test.py
 │       ├── io/
-│       │   └── dataHandler.py
-│       ├── ml/
-│       │   └── ML_survival_helpers.py
+│       │   └── data_handler.py
+│       ├── survival/
+│       │   └── helpers.py
 │       ├── plots/
-│       │   ├── metricsPlots_survival_helpers.py
-│       │   └── plots_helpers.py
+│       │   ├── metrics_helpers.py
+│       │   └── helpers.py
 │       └── utils/
 │           └── peptides_filter.py
 │
@@ -123,9 +123,9 @@ docker build -t survival:mlenv .
 # check if install correctly
 docker run --rm survival:mlenv python -m pip show survival
 # Run main script
-docker run --rm survival:mlenv python -m survival.cli.main_survival_trainTest --help
+docker run --rm survival:mlenv python -m phipsurv.cli.train_test --help
 # save image for exporting 
 docker save survival:mlenv -o survival_mlenv.tar
 
 ## Internally running
-python -m survival.cli.main_survival_trainTest --help
+python -m phipsurv.cli.train_test --help

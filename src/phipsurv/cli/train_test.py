@@ -15,13 +15,13 @@ from sklearn import set_config
 # ======================
 # Local / project imports
 # ======================
-from survival.io.dataHandler import (
+from phipsurv.io.data_handler import (
     Config,
     FeatureManager,
     MetadataHandler,
     OligosHandler,
 )
-from survival.ml.ML_survival_helpers import (
+from phipsurv.survival.helpers import (
     build_pipeline,
     nested_cv,
     train_and_validate_model,
